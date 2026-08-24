@@ -13,6 +13,13 @@ class Post extends Model
      */
     protected $casts = ['publicado' => 'boolean'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['titulo', 'contenido', 'publicado', 'categoria_id'];
+
     // Post.php: "pertenezco a una categoría"
     public function categoria() {
         return $this->belongsTo(Categoria::class);
@@ -27,5 +34,11 @@ class Post extends Model
     {
         return $query->where('categoria_id', $categoriaId);
     }
+
+    public function etiquetas()
+    {
+        return $this->belongsToMany(Etiqueta::class);
+    }
+
 
 }
