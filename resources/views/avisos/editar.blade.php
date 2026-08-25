@@ -33,7 +33,7 @@
             Guardar cambios
         </button>
     </form>
-    <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="max-w-md mx-auto p- rounded-lg mt-8 text-center" onsubmit="return confirm('¿Borrar este aviso?')">
+    <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="max-w-md mx-auto p-4 rounded-lg mt-8 text-center" onsubmit="return confirm('¿Borrar este aviso?')">
         @csrf
         @method('DELETE')
         <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
