@@ -29,14 +29,19 @@
                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">{{ old('contenido', $post->contenido) }}</textarea>
         @error('contenido') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
 
-        <button class="w-full bg-blue-900 text-white font-semibold rounded-lg py-2 hover:bg-blue-800 transition mt-5">
-            Guardar cambios
-        </button>
-    </form>
-    <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="max-w-md mx-auto p-4 rounded-lg mt-8 text-center" onsubmit="return confirm('¿Borrar este aviso?')">
-        @csrf
-        @method('DELETE')
-        <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
+        @can('update', $post)
+            <button class="w-full bg-blue-900 text-white font-semibold rounded-lg py-2 hover:bg-blue-800 transition mt-5">
+                Guardar cambios
+            </button>
+        @endcan
     </form>
 
+    @can('delete', $post)
+        <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="max-w-md mx-auto p-4 rounded-lg mt-8 text-center" onsubmit="return confirm('¿Borrar este aviso?')">
+            @csrf
+            @method('DELETE')
+            <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
+        </form>
+    @endcan
+    
 @endsection

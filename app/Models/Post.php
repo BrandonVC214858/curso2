@@ -23,7 +23,7 @@ class Post extends Model
      *
      * @var array
      */
-    protected $fillable = ['titulo', 'contenido', 'publicado', 'categoria_id'];
+    protected $fillable = ['titulo', 'contenido', 'publicado', 'categoria_id', 'user_id'];
 
     protected function resumen(): Attribute
     {
@@ -59,5 +59,11 @@ class Post extends Model
     {
         return $this->belongsToMany(Etiqueta::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 }
