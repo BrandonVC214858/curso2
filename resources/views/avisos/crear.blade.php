@@ -32,10 +32,4 @@
             Publicar aviso
         </button>
     </form>
-    <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="inline" onsubmit="return confirm('¿Borrar este aviso?')">
-        @csrf
-        @method('DELETE')
-        <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
-    </form>
-
 @endsection
