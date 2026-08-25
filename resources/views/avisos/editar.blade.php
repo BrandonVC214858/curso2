@@ -32,11 +32,11 @@
         <button class="w-full bg-blue-900 text-white font-semibold rounded-lg py-2 hover:bg-blue-800 transition mt-5">
             Guardar cambios
         </button>
-        <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="inline" onsubmit="return confirm('¿Borrar este aviso?')">
-            @csrf
-            @method('DELETE')
-            <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
-        </form>
+    </form>
+    <form method="POST" action="{{ route('avisos.destroy', $post) }}" class="max-w-md mx-auto p- rounded-lg mt-8 text-center" onsubmit="return confirm('¿Borrar este aviso?')">
+        @csrf
+        @method('DELETE')
+        <button class="text-red-600 text-sm font-semibold hover:underline">Borrar</button>
     </form>
 
 @endsection
