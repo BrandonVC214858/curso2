@@ -351,9 +351,16 @@
             $('status').textContent = r.status + ' ' + r.statusText;
             $('tiempo').textContent = ms + ' ms · ' + (r.headers.get('content-type') || 'sin tipo');
 
-            var bonito = texto;
-            try { bonito = JSON.stringify(JSON.parse(texto), null, 2); } catch (e) {}
-            $('respuesta').innerHTML = texto ? colorear(bonito) : '(respuesta vacía)';
+            var bonito = texto, recortada = false;
+            try {
+                var obj = JSON.parse(texto);
+                // Con APP_DEBUG=true, Laravel adjunta la traza completa del error.
+                // Estorba para leer el mensaje, asi que se guarda y no se pinta.
+                if (obj && obj.trace) { delete obj.trace; delete obj.file; delete obj.line; recortada = true; }
+                bonito = JSON.stringify(obj, null, 2);
+            } catch (e) {}
+            $('respuesta').innerHTML = (texto ? colorear(bonito) : '(respuesta vacía)') +
+                (recortada ? '\n<span style="color:#7c8db5;">(se recortó la traza del error: en producción no viaja)</span>' : '');
             pistaDeRespuesta(r.status, texto);
             alHistorial(r.status, actual.metodo, ruta);
 
