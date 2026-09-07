@@ -90,7 +90,11 @@ use Illuminate\Http\Request;
 Route::post('/token', [TokenController::class, 'crear']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/yo', fn (Request $request) => $request->user());
+    Route::get('/yo', fn (Request $request) => [
+        'id' => $request->user()->id,
+        'nombre' => $request->user()->name,
+        'rol' => $request->user()->rol,
+    ]);
     Route::post('/avisos', [PostController::class, 'store']);
     Route::put('/avisos/{post}', [PostController::class, 'update']);
     Route::delete('/avisos/{post}', [PostController::class, 'destroy']);
@@ -101,6 +105,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Es el mismo `Route::middleware(...)->group(...)` de la sesión 3, con otro guardia: allí `auth` revisaba la sesión, aquí `auth:sanctum` revisa el encabezado `Authorization: Bearer <token>`.
 
 `GET /api/yo` no sirve para nada en producción y sirve mucho ahora: es la forma más rápida de saber si tu token funciona.
+
+Fíjate en que no devuelve `$request->user()` a secas. Devolverlo publicaría la tabla `users` completa (correo, fecha de verificación, fechas internas), que es exactamente el problema que resolviste con el `PostResource`. La misma regla aplica en las respuestas de dos líneas.
 
 ✅ **Checkpoint A:** en el probador, pide un token con `POST /api/token` (viene lleno con `editor@blog.test` y `secreto123`). Al recibirlo, la etiqueta de arriba cambia a **token activo**. Luego manda `GET /api/yo` y confirma que responde **200** con tus datos.
 
