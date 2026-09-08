@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\TokenController;
 Route::post('/token', [TokenController::class, 'crear'])
     ->middleware('throttle:6,1');
 
+Route::get('/avisos', [PostController::class, 'index']);
+Route::get('/avisos/{post}', [PostController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/yo', fn (Request $request) => [
         'id' => $request->user()->id,
