@@ -18,7 +18,7 @@ class BuscadorAvisos extends Component
     public function render()             // LA VISTA: se vuelve a pintar
     {
         return view('livewire.buscador-avisos', [
-            'avisos' => Post::where('titulo', 'like', "%{$this->busqueda}%")->get(),
+            'avisos' => Post::publicados()->where('titulo', 'like', "%{$this->busqueda}%")->get(),
         ]);
     }
 }

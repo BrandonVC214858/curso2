@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
@@ -23,14 +22,7 @@ class Post extends Model
      *
      * @var array
      */
-    protected $fillable = ['titulo', 'contenido', 'publicado', 'categoria_id', 'user_id'];
-
-    protected function resumen(): Attribute
-    {
-        return Attribute::get(
-            fn () => Str::limit($this->contenido, 90)
-        );
-    }
+    protected $fillable = ['titulo', 'contenido', 'publicado', 'resumen', 'categoria_id', 'user_id'];
 
     protected function esNuevo(): Attribute
     {

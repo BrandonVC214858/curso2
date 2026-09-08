@@ -17,6 +17,16 @@ class PostPolicy
         return null;
     }
 
+    public function viewAny(User $user): bool
+    {
+        return true;
+    }
+
+    public function view(User $user, Post $post): bool
+    {
+        return true;
+    }
+
     public function update(User $user, Post $post): bool
     {
         return $user->id === $post->user_id;
@@ -25,6 +35,11 @@ class PostPolicy
     public function delete(User $user, Post $post): bool
     {
         return $user->id === $post->user_id;
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return false; // nadie borra en masa; el admin pasa por before()
     }
 
     public function create(User $user): bool
