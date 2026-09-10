@@ -123,7 +123,7 @@ describe('la Policy de la sesion 3, ahora en la API', function () {
         Sanctum::actingAs(User::factory()->create(['rol' => 'admin']));
 
         $this->deleteJson("/api/avisos/{$ajeno->id}")->assertStatus(204);
-        $this->assertDatabaseMissing('posts', ['id' => $ajeno->id]);
+        $this->assertSoftDeleted('posts', ['id' => $ajeno->id]);
     });
 });
 
