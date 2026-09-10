@@ -20,6 +20,8 @@ class PostResource extends JsonResource
                 'nombre' => $this->categoria->nombre,
             ]),
             'autor' => $this->whenLoaded('user', fn () => $this->user?->name),
+            'destinatarios' => $this->destinatarios ?? 0,
+            'notificados' => $this->notificados ?? 0,
             'creado' => $this->created_at->toIso8601String(),
         ];
     }
