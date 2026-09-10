@@ -151,3 +151,7 @@ test('mandar user_id de otro no cambia el dueno del aviso', function () {
     $this->assertDatabaseHas('posts', ['titulo' => 'Firmado por otro', 'user_id' => $this->editor->id]);
     $this->assertDatabaseMissing('posts', ['titulo' => 'Firmado por otro', 'user_id' => $otro->id]);
 });
+
+test('mandar 404 al show de un aviso que no existe', function () {
+    $this->getJson('/api/avisos/999')->assertStatus(404);
+});
