@@ -2,7 +2,7 @@
 
 Tiempo estimado: 2.5 horas, sin contar los extras. Se entrega en el Pull Request de siempre.
 
-Para repasar, en Moodle hay dos actividades de unos 10 minutos cada una: **Compila o truena**, doce casos de TypeScript en los que decides si el código compila, corre o truena, y **Canicas de RxJS**, doce diagramas en los que reconoces el operador. Tu mejor intento se registra solo.
+Para repasar, en Moodle hay una actividad de unos 10 minutos: **Compila o truena**, doce casos de TypeScript en los que decides si el código compila, corre o truena. Tu mejor intento se registra solo.
 
 **Si alguna pieza se te fue en clase**, empieza por [`05-primeros-pasos.md`](05-primeros-pasos.md): nueve pasos cortos en un componente de práctica, sin token, antes de la parte 1. **Si terminas todo y quieres más**, [`06-retos-avanzados.md`](06-retos-avanzados.md) trae cuatro retos: una pantalla por aviso con el router, editar con PUT, la paginación de Laravel y un interceptor que mide.
 
