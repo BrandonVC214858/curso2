@@ -5,7 +5,8 @@
 
 <main class="contenido">
   <app-entrar></app-entrar>
-  <app-avisos-lista></app-avisos-lista>
+  <app-aviso-nuevo (creado)="lista.cargar()"></app-aviso-nuevo>
+  <app-avisos-lista #lista></app-avisos-lista>
 </main>
 
 

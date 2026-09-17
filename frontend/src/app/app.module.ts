@@ -7,12 +7,14 @@ import { AuthInterceptor } from './interceptores/auth.interceptor';
 import { AppComponent } from './app.component';
 import { AvisosListaComponent } from './avisos-lista/avisos-lista.component';
 import { EntrarComponent } from './entrar/entrar.component';
+import { AvisoNuevoComponent } from './aviso-nuevo/aviso-nuevo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AvisosListaComponent,
-    EntrarComponent
+    EntrarComponent,
+    AvisoNuevoComponent
   ],
     imports: [
     BrowserModule,
