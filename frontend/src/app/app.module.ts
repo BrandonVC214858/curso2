@@ -8,13 +8,15 @@ import { AppComponent } from './app.component';
 import { AvisosListaComponent } from './avisos-lista/avisos-lista.component';
 import { EntrarComponent } from './entrar/entrar.component';
 import { AvisoNuevoComponent } from './aviso-nuevo/aviso-nuevo.component';
+import { PracticaComponent } from './practica/practica.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AvisosListaComponent,
     EntrarComponent,
-    AvisoNuevoComponent
+    AvisoNuevoComponent,
+    PracticaComponent
   ],
     imports: [
     BrowserModule,
