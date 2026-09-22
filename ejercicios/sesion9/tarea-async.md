@@ -137,17 +137,28 @@ Meta: la lista carga, puedes entrar, crear un aviso, y borrar el tuyo pero no el
      load_dotenv()
      ```
 
-  3. Cambia las dos líneas:
+  3. Cambia **las tres** líneas:
 
      ```python
      SECRET_KEY = os.environ["SECRET_KEY"]
      DEBUG = os.getenv("DEBUG", "False") == "True"
+     ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
      ```
 
-  4. Crea `api-django/.env` con las dos claves, y `api-django/.env.example` con las claves y sin los valores.
+     **`ALLOWED_HOSTS` no es opcional aquí**, y es la parte que sorprende: mientras `DEBUG` es `True`, Django ignora esa lista y acepta `localhost`. En cuanto la apagas, **exige la lista**, y si está vacía `runserver` ni siquiera arranca:
+
+     ```
+     CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False.
+     ```
+
+  4. Crea `api-django/.env` con las tres claves, y `api-django/.env.example` con las claves y sin los valores.
   5. Agrega `.env` al `.gitignore` de `api-django/`.
 
-  **Comprueba las dos cosas que enseñan:** borra la línea `SECRET_KEY` del `.env` y arranca; debe reventar al arrancar, y eso está bien. Y pon `DEBUG=False`, provoca un error y compara la página con la de antes.
+  **Comprueba las tres cosas que enseñan:**
+
+  1. Borra la línea `SECRET_KEY` del `.env` y arranca: **debe reventar al arrancar**, y eso está bien. Un secreto que falta tiene que hacer ruido.
+  2. Pon `DEBUG=False` **sin tocar `ALLOWED_HOSTS`** y arranca: sale el `CommandError` de arriba. Es el error que te enseña que las dos cosas van juntas.
+  3. Deja `DEBUG=False` con su `ALLOWED_HOSTS`, provoca un error en la API y compara la página con la de antes: se acabó la página amarilla con tu configuración a la vista.
 
   En el PR, una línea: **por qué `os.getenv("SECRET_KEY", "una-clave-cualquiera")` sería peor que reventar.** La respuesta está en la sección 6 de la lectura.
 

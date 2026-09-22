@@ -457,7 +457,15 @@ Es el `APP_DEBUG` de Laravel, y tiene el mismo riesgo.
 ALLOWED_HOSTS = []
 ```
 
-La lista de nombres de dominio con los que el proyecto acepta que lo llamen. Con `DEBUG = True` Django la ignora y acepta `localhost` y `127.0.0.1`. Con `DEBUG = False` y la lista vacía, **rechaza todo** con un 400, que es un momento clásico de desconcierto al desplegar por primera vez.
+La lista de nombres de dominio con los que el proyecto acepta que lo llamen. Con `DEBUG = True` Django la ignora y acepta `localhost` y `127.0.0.1`.
+
+Con `DEBUG = False` y la lista vacía **el servidor ni siquiera arranca**:
+
+```
+CommandError: You must set settings.ALLOWED_HOSTS if DEBUG is False.
+```
+
+Es un momento clásico de desconcierto al desplegar por primera vez, y la razón por la que `DEBUG` y `ALLOWED_HOSTS` se mueven siempre juntos al entorno.
 
 ### `MIDDLEWARE`
 
@@ -564,6 +572,7 @@ import os
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 ```
 
 Dos cosas que saltan a la vista:
