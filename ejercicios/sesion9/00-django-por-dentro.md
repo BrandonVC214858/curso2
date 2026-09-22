@@ -27,7 +27,7 @@ Todo lo que aparece aquí es código que vas a tener enfrente, no ejemplos inven
 
 ## 1. Python, lo justo para leer Django
 
-No vas a aprender Python esta semana, y no hace falta. Lo que sí hace falta es poder leer un archivo de Django sin tropezar. Son seis cosas.
+Para leer un archivo de Django sin tropezar bastan seis cosas. Estas son.
 
 ### 1.1 Lo que desaparece
 
