@@ -4,7 +4,7 @@ Tiempo estimado: 2.5 horas, sin contar los extras. Se entrega en el Pull Request
 
 En clase escribiste en Django la misma API de avisos que ya tenías en Laravel, y viste que cinco de las seis respuestas salen idénticas. Esta tarea cierra lo que quedó a medias y te lleva al punto que de verdad enseña: **conectar tu Angular de la sesión 8 a esta API nueva**, y descubrir por qué no funciona a la primera.
 
-La guía escrita de todo lo de clase está en [`01-django-de-cero.md`](01-django-de-cero.md) y [`02-api-con-drf.md`](02-api-con-drf.md).
+La guía escrita de todo lo de clase está en [`01-django-de-cero.md`](01-django-de-cero.md) y [`02-api-con-drf.md`](02-api-con-drf.md). Y la explicación de los conceptos, con el detalle que en clase pasa rápido, está en la lectura [`00-django-por-dentro.md`](00-django-por-dentro.md): Python lo justo para leer Django, el entorno virtual, qué es cada archivo del proyecto, `settings.py` y las variables de entorno. **Si algo de la clase te quedó en el aire, empieza por ahí.**
 
 Todos los comandos se corren desde `api-django/`, con el servidor en el puerto 8001.
 
@@ -125,6 +125,31 @@ Meta: la lista carga, puedes entrar, crear un aviso, y borrar el tuyo pero no el
 - **B.** Registra `AvisoAdmin` con `list_display`, `list_filter` y `search_fields`, y compara el resultado con lo que hiciste en Filament en la sesión 4.
 - **C.** Cambia `PAGE_SIZE` a 3 y sigue el enlace `next` hasta el final de la lista, desde la API navegable.
 - **D.** Escribe un comentario (un `"""docstring"""`) dentro de `AvisoViewSet` explicando qué hace, recarga la API navegable y mira dónde apareció.
+- **E. Saca la configuración del código** (unos 15 minutos, y es el extra que más se parece a un trabajo real). Tu `settings.py` trae `SECRET_KEY` escrita y `DEBUG = True`, tal como los genera Django. Móvelos al entorno:
+
+  1. `.venv/bin/pip install python-dotenv` y agrégalo a `requirements.txt`.
+  2. Arriba de `settings.py`:
+
+     ```python
+     import os
+     from dotenv import load_dotenv
+
+     load_dotenv()
+     ```
+
+  3. Cambia las dos líneas:
+
+     ```python
+     SECRET_KEY = os.environ["SECRET_KEY"]
+     DEBUG = os.getenv("DEBUG", "False") == "True"
+     ```
+
+  4. Crea `api-django/.env` con las dos claves, y `api-django/.env.example` con las claves y sin los valores.
+  5. Agrega `.env` al `.gitignore` de `api-django/`.
+
+  **Comprueba las dos cosas que enseñan:** borra la línea `SECRET_KEY` del `.env` y arranca; debe reventar al arrancar, y eso está bien. Y pon `DEBUG=False`, provoca un error y compara la página con la de antes.
+
+  En el PR, una línea: **por qué `os.getenv("SECRET_KEY", "una-clave-cualquiera")` sería peor que reventar.** La respuesta está en la sección 6 de la lectura.
 
 ---
 
@@ -138,7 +163,7 @@ git commit -m "sesion 9: la API en Django"
 git push origin HEAD
 ```
 
-Revisa que **`api-django/.venv`, `db.sqlite3` y los `__pycache__` no aparezcan** en los cambios: el `.gitignore` de `api-django/` los deja fuera. Si aparecen, algo se te quedó fuera de esa carpeta.
+Revisa que **`api-django/.venv`, `db.sqlite3`, los `__pycache__` y, si hiciste el extra E, el `.env` no aparezcan** en los cambios: el `.gitignore` de `api-django/` los deja fuera. Si aparecen, algo se te quedó fuera de esa carpeta.
 
 Y en la plataforma, la URL de tu Pull Request en **Entrega Sesión 9**.
 
