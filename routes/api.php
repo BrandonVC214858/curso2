@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PostController;
@@ -7,6 +8,8 @@ use App\Http\Controllers\Api\TokenController;
 
 Route::post('/token', [TokenController::class, 'crear'])
     ->middleware('throttle:6,1');
+
+Route::get('/categorias', fn () => Categoria::orderBy('nombre')->get(['id', 'nombre']));
 
 Route::get('/avisos', [PostController::class, 'index']);
 Route::get('/avisos/{post}', [PostController::class, 'show']);
