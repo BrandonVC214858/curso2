@@ -4,8 +4,8 @@ from avisos.permissions import EsAutorOAdmin
 from rest_framework.response import Response
 
 
-from .models import Aviso
-from .serializers import AvisoSerializer
+from .models import Aviso, Categoria
+from .serializers import AvisoSerializer, CategoriaSerializer
 
 
 class AvisoViewSet(viewsets.ModelViewSet):
@@ -33,3 +33,7 @@ def yo(request):
         "rol": "admin" if request.user.is_staff else "autor",
     })
 
+
+@api_view(["GET"])
+def categorias(request):
+    return Response(CategoriaSerializer(Categoria.objects.order_by("nombre"), many=True).data)
