@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { DJANGO } from '../backend';
 import { SesionService } from '../servicios/sesion.service';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     if (token) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+        setHeaders: { Authorization: `${DJANGO ? 'Token' : 'Bearer'} ${token}` }
       });
     }
 

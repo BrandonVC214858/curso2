@@ -1,8 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { Aviso, NuevoAviso } from '../modelos/aviso';
+import { Aviso } from '../modelos/aviso';
+import { Categoria } from '../modelos/categoria';
 import { AvisosService } from '../servicios/avisos.service';
+import { CategoriasService } from '../servicios/categorias.service';
 import { SesionService } from '../servicios/sesion.service';
 
 @Component({
@@ -10,31 +13,52 @@ import { SesionService } from '../servicios/sesion.service';
   templateUrl: './aviso-nuevo.component.html',
   styleUrls: ['./aviso-nuevo.component.css']
 })
-export class AvisoNuevoComponent {
+export class AvisoNuevoComponent implements OnInit {
   @Output() creado = new EventEmitter<Aviso>();
 
-  aviso: NuevoAviso = { titulo: '', contenido: '', categoria_id: 1 };
+  // Las mismas reglas que tu validate() de Laravel, del lado de la pantalla.
+  form = this.fb.group({
+    titulo: ['', [Validators.required, Validators.maxLength(120)]],
+    contenido: ['', Validators.required],
+    categoria_id: [null as number | null, Validators.required]
+  });
+
+  categorias: Categoria[] = [];
   errores: Record<string, string[]> = {};
   mensaje = '';
   enviando = false;
 
-  constructor(private avisosService: AvisosService, public sesion: SesionService) { }
+  constructor(
+    private fb: NonNullableFormBuilder,
+    private avisosService: AvisosService,
+    private categoriasService: CategoriasService,
+    public sesion: SesionService
+  ) { }
+
+  ngOnInit(): void {
+    this.categoriasService.listar().subscribe(categorias => this.categorias = categorias);
+  }
 
   guardar(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.errores = {};
     this.mensaje = '';
     this.enviando = true;
-    this.avisosService.crear(this.aviso).subscribe({
+    this.avisosService.crear(this.form.getRawValue()).subscribe({
       next: creado => {
         this.enviando = false;
         this.mensaje = `201 · se creó "${creado.titulo}"`;
-        this.aviso = { titulo: '', contenido: '', categoria_id: 1 };
+        this.form.reset();
         this.creado.emit(creado);
       },
       error: (e: HttpErrorResponse) => {
         this.enviando = false;
-        if (e.status === 422) {
-          this.errores = e.error.errors;
+        // Laravel valida con 422 y { errors }; DRF con 400 y los campos sueltos.
+        if (e.status === 422 || e.status === 400) {
+          this.errores = e.error.errors ?? e.error;
         } else {
           this.mensaje = `${e.status} · tu API no lo creó`;
         }

@@ -81,6 +81,20 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "django": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/app/backend.ts",
+                  "with": "src/app/backend.django.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -93,6 +107,10 @@
             },
             "development": {
               "browserTarget": "avisos:build:development"
+            },
+            "django": {
+              "browserTarget": "avisos:build:django",
+              "proxyConfig": "proxy.django.conf.json"
             }
           },
           "defaultConfiguration": "development",

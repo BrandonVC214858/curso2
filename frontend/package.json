@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:django": "ng serve --configuration django",
     "build": "ng build",
     "watch": "ng build --watch --configuration development"
   },

@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './interceptores/auth.interceptor';
+import { ErroresInterceptor } from './interceptores/errores.interceptor';
 
 import { AppComponent } from './app.component';
 import { AvisosListaComponent } from './avisos-lista/avisos-lista.component';
@@ -21,10 +22,12 @@ import { PracticaComponent } from './practica/practica.component';
     imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
     providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErroresInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
