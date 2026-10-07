@@ -1,0 +1,13 @@
+<header class="barra">
+  <span class="marca">{{ titulo }}</span>
+  <span class="lema">Un frontend en Angular que habla con tu API de Laravel</span>
+</header>
+
+<main class="contenido">
+  <app-entrar></app-entrar>
+  <app-aviso-nuevo (creado)="lista.cargar()"></app-aviso-nuevo>
+  <app-avisos-lista #lista></app-avisos-lista>
+  <!-- <app-practica></app-practica> -->
+</main>
+
+
