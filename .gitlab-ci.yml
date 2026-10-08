@@ -1,0 +1,85 @@
+stages:
+  - probar
+  - desplegar
+
+construye_angular:
+  stage: probar
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build -- --configuration production
+
+prueba_django:
+  stage: probar
+  image: python:3.12-slim
+  services:
+    - name: postgres:16-alpine
+      alias: db
+  variables:
+    POSTGRES_DB: avisos_test
+    POSTGRES_USER: prueba
+    POSTGRES_PASSWORD: esta_clave_es_de_mentira_y_solo_vive_en_el_pipeline
+    DJANGO_SECRET_KEY: clave_de_mentira_solo_para_el_pipeline
+    DJANGO_DEBUG: "False"
+    DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+    DJANGO_DB_NAME: avisos_test
+    DJANGO_DB_USER: prueba
+    DJANGO_DB_PASSWORD: esta_clave_es_de_mentira_y_solo_vive_en_el_pipeline
+    DJANGO_DB_HOST: db
+    DJANGO_DB_PORT: "5432"
+  before_script:
+    - pip install --no-cache-dir -r api-django/requirements.txt "psycopg[binary]==3.2.*"
+    - cd api-django
+  script:
+    - python manage.py migrate --noinput
+    - python manage.py test --noinput
+
+prueba_laravel:
+  stage: probar
+  image: php:8.3-cli
+  services:
+    - name: postgres:16-alpine
+      alias: db
+  variables:
+    POSTGRES_DB: avisos_test
+    POSTGRES_USER: prueba
+    POSTGRES_PASSWORD: esta_clave_es_de_mentira_y_solo_vive_en_el_pipeline
+    APP_ENV: testing
+    DB_CONNECTION: pgsql
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_DATABASE: avisos_test
+    DB_USERNAME: prueba
+    DB_PASSWORD: esta_clave_es_de_mentira_y_solo_vive_en_el_pipeline
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git unzip libpq-dev libzip-dev libicu-dev
+    - docker-php-ext-install pdo_pgsql zip intl
+    - curl -fsSL https://getcomposer.org/installer -o /tmp/composer-setup.php
+    - php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --prefer-dist --no-progress
+    - cp .env.example .env && php artisan key:generate
+  script:
+    - php artisan migrate --force
+    - php artisan test
+
+desplegar:
+  stage: desplegar
+  image: alpine:3.20
+  # Sin las tres pruebas en verde, este job queda omitido
+  needs: [prueba_laravel, prueba_django, construye_angular]
+  before_script:
+    - apk add --no-cache curl jq
+  script:
+    # Pide el despliegue y espera: el job queda verde solo si tu sitio responde
+    - sh docker/desplegar.sh
+  environment:
+    name: produccion
+    url: $DIRECCION_PUBLICA
+  # Un despliegue a la vez: si alguien empuja mientras corre, hace fila
+  resource_group: produccion
+  rules:
+    # Solo desde la rama principal, y solo cuando alguien pulsa el botón
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: manual
+      allow_failure: false

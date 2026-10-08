@@ -1,11 +1,7 @@
-# Esqueleto. En la guia 02 lo completas hasta tener los cuatro servicios.
+# Los cuatro servicios del proyecto. Este archivo es el que lee el servidor:
+# aqui no se publica ningun puerto. Los de tu maquina estan en compose.override.yaml.
 #
-# Ya esta el primero, la base de datos, para que veas la forma. Te faltan tres:
-#   2. laravel   construye con docker/laravel.Dockerfile, publica el 8081, habla con db
-#   3. django    construye con docker/django.Dockerfile, publica el 8082, habla con db
-#   4. angular   construye con docker/angular.Dockerfile, publica el 8080
-#
-# Reglas que se repiten en los tres:
+# Reglas que se repiten:
 #   - ninguno lleva la contrasena escrita aqui: sale de tu .env
 #   - todos van en la misma red `interna`, si no, no se ven entre ellos
 #   - el que necesita la base espera a que este sana con depends_on + condition
@@ -28,12 +24,75 @@ services:
       timeout: 3s
       retries: 20
     networks: [interna]
+    deploy:
+      resources:
+        limits: {memory: 256M}
 
-  # 2. laravel: aqui va el tuyo
+  laravel:
+    build:
+      context: .
+      dockerfile: docker/laravel.Dockerfile
+    # Migraciones y seeders al arrancar; si fallan, Apache no arranca
+    command: ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && exec apache2-foreground"]
+    environment:
+      APP_NAME: Avisos
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?falta APP_KEY en tu .env, generala con php artisan key:generate}
+      APP_URL: ${URL_LARAVEL:-http://localhost:8081}
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_DATABASE: ${BD_LARAVEL}
+      DB_USERNAME: ${BD_USUARIO}
+      DB_PASSWORD: ${BD_CLAVE}
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@file_get_contents(\"http://127.0.0.1/up\") === false ? 1 : 0);'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - almacen-laravel:/var/www/html/storage
+    networks: [interna]
+    deploy:
+      resources:
+        limits: {memory: 384M}
 
-  # 3. django: aqui va el tuyo
+  django:
+    build:
+      context: .
+      dockerfile: docker/django.Dockerfile
+    command: ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2 --access-logfile -"]
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?falta DJANGO_SECRET_KEY en tu .env}
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,django}
+      DJANGO_DB_NAME: ${BD_DJANGO:-avisos_django}
+      DJANGO_DB_USER: ${BD_USUARIO}
+      DJANGO_DB_PASSWORD: ${BD_CLAVE}
+      DJANGO_DB_HOST: db
+      DJANGO_DB_PORT: "5432"
+    depends_on:
+      db: {condition: service_healthy}
+    networks: [interna]
+    deploy:
+      resources:
+        limits: {memory: 256M}
 
-  # 4. angular: aqui va el tuyo
+  angular:
+    build:
+      context: .
+      dockerfile: docker/angular.Dockerfile
+    depends_on: [laravel, django]
+    networks: [interna]
+    deploy:
+      resources:
+        limits: {memory: 64M}
 
 networks:
   interna:
